@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { cn } from "@/src/lib/utils";
 import { GoogleGenAI } from "@google/genai";
 import ReactMarkdown from "react-markdown";
+import { AudioHandler } from "@/src/lib/audio-utils";
 
 export default function AIAgent() {
   const [input, setInput] = React.useState("");
@@ -14,6 +15,8 @@ export default function AIAgent() {
   ]);
 
   const chatRef = React.useRef<any>(null);
+  const audioHandler = React.useRef(new AudioHandler());
+  const wsRef = React.useRef<WebSocket | null>(null);
 
   React.useEffect(() => {
     const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
@@ -25,9 +28,50 @@ export default function AIAgent() {
     });
   }, []);
 
-  const toggleLiveSession = () => {
-    setIsLiveSessionActive(!isLiveSessionActive);
-    // TODO: Implement Live API session handling
+  const toggleLiveSession = async () => {
+    if (isLiveSessionActive) {
+      // Stop session
+      if (wsRef.current) {
+        wsRef.current.close();
+        wsRef.current = null;
+      }
+      audioHandler.current.stopRecording();
+      setIsLiveSessionActive(false);
+    } else {
+      // Start session
+      setIsLiveSessionActive(true);
+      const apiKey = process.env.GEMINI_API_KEY;
+      const wsUrl = `wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1alpha.GenerativeService.BidiGenerateContent?key=${apiKey}`;
+      
+      wsRef.current = new WebSocket(wsUrl);
+      
+      wsRef.current.onopen = () => {
+        console.log("WebSocket connected");
+        // Send initial setup message if required by the API
+      };
+
+      wsRef.current.onmessage = (event) => {
+        // Handle incoming audio data
+        const data = JSON.parse(event.data);
+        if (data.serverContent?.modelTurn?.parts?.[0]?.inlineData?.data) {
+          audioHandler.current.playPcm(data.serverContent.modelTurn.parts[0].inlineData.data);
+        }
+      };
+
+      await audioHandler.current.startRecording((base64Data) => {
+        if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+          wsRef.current.send(JSON.stringify({
+            clientContent: {
+              turns: [{
+                role: "user",
+                parts: [{ inlineData: { mimeType: "audio/pcm", data: base64Data } }]
+              }],
+              turnComplete: true
+            }
+          }));
+        }
+      });
+    }
   };
 
   const handleSend = async () => {

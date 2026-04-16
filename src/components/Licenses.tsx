@@ -1,4 +1,5 @@
 import * as React from "react";
+import { logAuditAction } from "../firebase";
 import { Verified, CheckCircle, Loader2, AlertCircle, ShieldAlert, Search, Mail, User as UserIcon, Key as KeyIcon, X, Copy, Settings, RefreshCcw, Power, PowerOff, Minus, Plus } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { cn } from "@/src/lib/utils";
@@ -339,6 +340,7 @@ function ManageModal({ sale, onClose, onRefresh }: any) {
     setSuccessMsg(null);
     try {
       await actionFn();
+      await logAuditAction(actionName, sale.license_key, `Performed ${actionName} on license.`);
       setSuccessMsg(`Successfully performed: ${actionName}`);
       onRefresh();
     } catch (err: any) {

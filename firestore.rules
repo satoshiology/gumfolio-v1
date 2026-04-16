@@ -1,0 +1,29 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: auditLogs
+    // Document ID: auto-generated
+    // Fields:
+    //   - timestamp: string (required, ISO 8601)
+    //   - userId: string (required)
+    //   - action: string (required)
+    //   - licenseKey: string (required)
+    //   - details: string (optional)
+    //
+    // ===============================================================
+
+    match /auditLogs/{logId} {
+      // Only authenticated users can read logs (for now, restrict to admins in future)
+      allow read: if request.auth != null;
+      // Users can create logs
+      allow create: if request.auth != null && 
+        request.resource.data.keys().hasAll(['timestamp', 'userId', 'action', 'licenseKey']) &&
+        request.resource.data.userId == request.auth.uid;
+      allow update, delete: if false; // Logs are immutable
+    }
+  }
+}

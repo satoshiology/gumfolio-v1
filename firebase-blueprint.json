@@ -1,0 +1,23 @@
+{
+  "entities": {
+    "AuditLogEntry": {
+      "title": "AuditLogEntry",
+      "description": "An entry in the license management audit log.",
+      "type": "object",
+      "properties": {
+        "timestamp": { "type": "string", "format": "date-time" },
+        "userId": { "type": "string" },
+        "action": { "type": "string" },
+        "licenseKey": { "type": "string" },
+        "details": { "type": "string" }
+      },
+      "required": ["timestamp", "userId", "action", "licenseKey"]
+    }
+  },
+  "firestore": {
+    "/auditLogs/{logId}": {
+      "schema": { "$ref": "AuditLogEntry" },
+      "description": "Audit logs for license management actions."
+    }
+  }
+}
