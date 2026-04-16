@@ -83,6 +83,9 @@ export default function AIAgent() {
     setIsLoading(true);
     
     try {
+      if (!process.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY === "MY_GEMINI_API_KEY") {
+        throw new Error("GEMINI_API_KEY is not configured. Please set it in the AI Studio Secrets panel.");
+      }
       const responseStream = await chatRef.current.sendMessageStream({ message: input });
       let fullResponse = "";
       for await (const chunk of responseStream) {
@@ -94,9 +97,14 @@ export default function AIAgent() {
       }]);
     } catch (error) {
       console.error("Chat Error Details:", error);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      const displayMessage = errorMessage.includes("API key not valid") 
+        ? "I encountered a neural glitch: The API key is invalid or missing. Please ensure the GEMINI_API_KEY is correctly configured in the AI Studio Secrets panel."
+        : `I encountered a neural glitch: ${errorMessage}. Please try again.`;
+      
       setMessages(prev => [...prev, { 
         role: "assistant", 
-        content: `I encountered a neural glitch: ${error instanceof Error ? error.message : String(error)}. Please try again.` 
+        content: displayMessage
       }]);
     } finally {
       setIsLoading(false);
