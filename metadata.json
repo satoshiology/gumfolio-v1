@@ -1,0 +1,9 @@
+{
+  "name": "Remix: Gumfolio-V6",
+  "description": "Scale your Gumroad store with Gumfolio. Our proactive, agentic AI acts as your full-time digital employee, automating sales and operations autonomously.",
+  "requestFramePermissions": [
+    "microphone"
+  ],
+  "C7": [],
+  "aq": []
+}

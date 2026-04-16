@@ -1,0 +1,210 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-headline: "Manrope", sans-serif;
+  --font-body: "Inter", sans-serif;
+  --font-label: "Plus Jakarta Sans", sans-serif;
+
+  --color-surface-dim: #000000;
+  --color-surface-container: #0a0a0a;
+  --color-surface-container-low: #050505;
+  --color-surface-container-high: #111111;
+  --color-surface-container-highest: #1a1a1a;
+  --color-surface-container-lowest: #000000;
+  
+  --color-primary: #00ff41;
+  --color-primary-dim: #008f11;
+  --color-secondary: #00ff00;
+  --color-secondary-dim: #003b00;
+  --color-tertiary: #d1ffbd;
+  --color-tertiary-dim: #a6ff8a;
+  
+  --color-on-surface: #ffffff;
+  --color-on-surface-variant: #888888;
+  
+  --radius-xl: 1.5rem;
+  --radius-xxl: 2rem;
+}
+
+@layer base {
+  body {
+    @apply bg-surface-dim text-on-surface font-body;
+  }
+  #root {
+    z-index: 1;
+    position: relative;
+  }
+}
+
+.glass-card {
+  @apply bg-surface-container/40 backdrop-blur-xl border border-white/5;
+}
+
+.mesh-gradient-bg {
+  background: linear-gradient(135deg, #008f11 0%, #00ff41 100%);
+}
+
+.noise-overlay {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  opacity: 0.02;
+  pointer-events: none;
+}
+
+.neon-text-glow {
+  text-shadow: 0 0 20px rgba(0, 255, 65, 0.4);
+}
+
+/* AI Space Button */
+.ai-space-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  overflow: hidden;
+  background-size: 300% 300%;
+  cursor: pointer;
+  backdrop-filter: blur(1rem);
+  border-radius: 50%;
+  transition: 0.5s;
+  animation: gradient_301 5s ease infinite, alert_pulse 2s infinite;
+  border: double 4px transparent;
+  background-image: linear-gradient(#050505, #050505),
+    linear-gradient(
+      137.48deg,
+      #00ff41 10%,
+      #00661a 45%,
+      #001a06 67%,
+      #00ff41 87%
+    );
+  background-origin: border-box;
+  background-clip: content-box, border-box;
+  position: relative;
+}
+
+.ai-space-btn .container-stars {
+  position: absolute;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  transition: 0.5s;
+  backdrop-filter: blur(1rem);
+  border-radius: 50%;
+}
+
+.ai-space-btn .btn-icon {
+  z-index: 2;
+  width: 24px;
+  height: 24px;
+  filter: invert(1) drop-shadow(0 0 6px #00ff41);
+  pointer-events: none;
+}
+
+.ai-space-btn .glow {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 3.5rem;
+  height: 3.5rem;
+}
+
+.ai-space-btn .circle {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  position: absolute;
+  filter: blur(2rem);
+  animation: pulse_3011 4s infinite;
+  z-index: -1;
+}
+
+.ai-space-btn .circle:nth-of-type(1) {
+  background: rgba(0, 255, 65, 0.6);
+}
+
+.ai-space-btn .circle:nth-of-type(2) {
+  background: rgba(0, 255, 65, 0.3);
+}
+
+.ai-space-btn:hover .container-stars {
+  z-index: 1;
+  background-color: #021104;
+}
+
+.ai-space-btn:hover {
+  transform: scale(1.1);
+}
+
+.ai-space-btn:active {
+  border: double 4px #00ff41;
+  background-origin: border-box;
+  background-clip: content-box, border-box;
+  animation: none;
+}
+
+.ai-space-btn:active .circle {
+  background: #00ff41;
+}
+
+.ai-space-btn .stars {
+  position: relative;
+  background: transparent;
+  width: 200rem;
+  height: 200rem;
+}
+
+.ai-space-btn .stars::after {
+  content: "";
+  position: absolute;
+  top: -10rem;
+  left: -100rem;
+  width: 100%;
+  height: 100%;
+  animation: animStarRotate 90s linear infinite;
+  background-image: radial-gradient(rgba(0, 255, 65, 0.8) 1px, transparent 1%);
+  background-size: 50px 50px;
+}
+
+.ai-space-btn .stars::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -50%;
+  width: 170%;
+  height: 500%;
+  animation: animStar 60s linear infinite;
+  background-image: radial-gradient(rgba(0, 255, 65, 0.8) 1px, transparent 1%);
+  background-size: 50px 50px;
+  opacity: 0.5;
+}
+
+@keyframes alert_pulse {
+  0% { box-shadow: 0 0 0 0 rgba(0, 255, 65, 0.6); }
+  70% { box-shadow: 0 0 0 15px rgba(0, 255, 65, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(0, 255, 65, 0); }
+}
+
+@keyframes animStar {
+  from { transform: translateY(0); }
+  to { transform: translateY(-135rem); }
+}
+
+@keyframes animStarRotate {
+  from { transform: rotate(360deg); }
+  to { transform: rotate(0); }
+}
+
+@keyframes gradient_301 {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes pulse_3011 {
+  0% { transform: scale(0.75); }
+  70% { transform: scale(1); }
+  100% { transform: scale(0.75); }
+}
